@@ -1,0 +1,1 @@
+# AdMobMediationAdapterVpadn-iOS-SPM
