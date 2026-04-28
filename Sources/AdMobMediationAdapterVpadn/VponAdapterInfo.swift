@@ -11,13 +11,21 @@ struct VponAdapterInfo {
     
     // MARK: - Constants
     
-    static let adapterVersion = "2.2.0-beta2"
+    static let adapterVersion = "2.2.0-beta3"
     static let limitVponSDKVersion = "5.7.6"
     
     /// "parameter"
     static let nativeAdAdUnitIDKey = "parameter"
     static let displayAdAdUnitIDKey = "pubid"
     static let ERROR_DOMAIN = "com.vpon.vpadnsdk"
+
+    // Reserved contentData keys injected by this adapter on every Vpon ad
+    // request, so Vpon backend can correlate the request with the adapter
+    // and AdMob SDK versions in use. Underscore prefix marks them as
+    // adapter-reserved; integrator-supplied content data with the same key
+    // wins (we never overwrite integrator data).
+    private static let contentDataAdapterVersionKey = "_vpon_admob_adapter_version"
+    private static let contentDataAdMobSDKVersionKey = "_vpon_admob_sdk_version"
     
     struct ExtrasKey {
         
@@ -109,29 +117,38 @@ struct VponAdapterInfo {
     
     static func createRequest(from adConfiguration: MediationAdConfiguration) -> VponAdRequest {
         let request = VponAdRequest()
-        
-        // 1. 獲取 Extras (由 adConfiguration.extras 提供)
+
+        // 1. Seed contentData with adapter-reserved metadata. Integrator-supplied
+        //    content data (from Extras) is merged on top, so integrator keys
+        //    always win on collision.
+        let admobVersion = MobileAds.shared.versionNumber
+        var contentData: [String: Any] = [
+            contentDataAdapterVersionKey: adapterVersion,
+            contentDataAdMobSDKVersionKey: "\(admobVersion.majorVersion).\(admobVersion.minorVersion).\(admobVersion.patchVersion)",
+        ]
+
+        // 2. Process Extras (provided by adConfiguration.extras)
         if let extras = adConfiguration.extras as? Extras,
            let params = extras.additionalParameters {
-            
-            // --- 處理 Content Data ---
-            if let contentData = params[ExtrasKey.contentData] as? [String: Any] {
-                request.setContentData(contentData)
+
+            // --- Content Data (merge over adapter metadata) ---
+            if let integratorContentData = params[ExtrasKey.contentData] as? [String: Any] {
+                integratorContentData.forEach { contentData[$0.key] = $0.value }
             }
-            
-            // --- 處理 Content URL ---
+
+            // --- Content URL ---
             if let contentUrl = params[ExtrasKey.contentURL] as? String {
                 request.setContentUrl(contentUrl)
             }
-            
-            // --- 處理 Friendly Obstructions ---
+
+            // --- Friendly Obstructions ---
             if let friendlyObs = params[ExtrasKey.friendlyObstructions] as? [[String: Any]] {
                 for item in friendlyObs {
                     guard let view = item[ExtrasKey.friendlyObstructionsView] as? UIView,
                           let desc = item[ExtrasKey.friendlyObstructionsDesc] as? String else {
                         continue
                     }
-                    
+
                     var purpose: VponFriendlyObstructionType = .other
                     if let rawPurpose = item[ExtrasKey.friendlyObstructionsPurpose] as? Int {
                         purpose = VponAdObstruction.getVponPurpose(rawPurpose)
@@ -140,6 +157,8 @@ struct VponAdapterInfo {
                 }
             }
         }
+
+        request.setContentData(contentData)
         return request
     }
 }

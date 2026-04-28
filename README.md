@@ -30,7 +30,7 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
    ```
    https://github.com/vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM
    ```
-3. Select version rule **Exact Version** and enter `2.2.0-beta2`
+3. Select version rule **Exact Version** and enter `2.2.0-beta3`
 4. Click **Add Package**
 
 > **Note:** Pre-release versions (e.g. `-beta2`) are not picked up by the **Up to Next Major** rule. You must use **Exact Version** to install a beta build.
@@ -91,7 +91,7 @@ request.register(extras)
 
 | Adapter      | Vpon SDK | Google Mobile Ads |
 |--------------|----------|-------------------|
-| 2.2.0-beta2  | ≥ 5.7.6  | ≥ 12.0            |
+| 2.2.0-beta3  | ≥ 5.7.6  | ≥ 12.0            |
 
 ---
 
