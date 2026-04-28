@@ -11,7 +11,7 @@ struct VponAdapterInfo {
     
     // MARK: - Constants
     
-    static let adapterVersion = "2.2.0-beta3"
+    static let adapterVersion = "2.2.0"
     static let limitVponSDKVersion = "5.7.6"
     
     /// "parameter"

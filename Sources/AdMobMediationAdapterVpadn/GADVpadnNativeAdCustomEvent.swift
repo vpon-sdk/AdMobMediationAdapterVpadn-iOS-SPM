@@ -209,12 +209,28 @@ extension GADVpadnNativeAdCustomEvent {
         from url: URL,
         completion: @escaping (UIImage?) -> Void
     ) {
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            if let data = data, let image = UIImage(data: data) {
-                completion(image)
-            } else {
+        // 8s timeout bounds the native ad load so a slow CDN doesn't hang the
+        // whole flow indefinitely; AdMob's mediation timeout window is in the
+        // same ballpark. Failures are logged via the adapter's log channel
+        // (rather than swallowed) to aid wireless / weak-network triage.
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 8
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            if let error = error {
+                VponAdapterInfo.log(
+                    "Image download failed for \(url.absoluteString): \(error.localizedDescription)"
+                )
                 completion(nil)
+                return
             }
+            guard let data = data, let image = UIImage(data: data) else {
+                VponAdapterInfo.log(
+                    "Image download returned no decodable image for \(url.absoluteString)"
+                )
+                completion(nil)
+                return
+            }
+            completion(image)
         }.resume()
     }
 }

@@ -30,10 +30,8 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
    ```
    https://github.com/vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM
    ```
-3. Select version rule **Exact Version** and enter `2.2.0-beta3`
+3. Select version rule **Up to Next Major Version** and enter `2.2.0`
 4. Click **Add Package**
-
-> **Note:** Pre-release versions (e.g. `-beta2`) are not picked up by the **Up to Next Major** rule. You must use **Exact Version** to install a beta build.
 
 The adapter automatically pulls in:
 
@@ -52,6 +50,14 @@ You must manually add `-ObjC` to your Target's **Other Linker Flags** to prevent
 3. Add `-ObjC`
 
 > If your project also pulls VpadnSDK or GoogleMobileAds via CocoaPods elsewhere, switch those to Swift Package Manager too — mixing can cause duplicate-symbol linker errors.
+
+---
+
+## Migration from CocoaPods
+
+Starting with 2.2.0, AdMobMediationAdapterVpadn is distributed exclusively via Swift Package Manager. CocoaPods is no longer supported for new versions.
+
+If your project currently uses `pod 'AdMobMediationAdapterVpadn'`, remove the pod entry, run `pod install` to clean up, and follow the [Installation](#installation) instructions above to add the package via SPM.
 
 ---
 
@@ -89,9 +95,15 @@ request.register(extras)
 
 ## Version Compatibility
 
-| Adapter      | Vpon SDK | Google Mobile Ads |
-|--------------|----------|-------------------|
-| 2.2.0-beta3  | ≥ 5.7.6  | ≥ 12.0            |
+| Adapter | Vpon SDK | Google Mobile Ads |
+|---------|----------|-------------------|
+| 2.2.0   | ≥ 5.7.6  | ≥ 12.0            |
+
+---
+
+## Modifications
+
+Source files in this repository are visible for inspection and debugging purposes. Per the LICENSE, modification or redistribution requires written authorization from Vpon. For bug reports, feature requests, or licensing inquiries, please contact <mi@vpon.com>.
 
 ---
 
