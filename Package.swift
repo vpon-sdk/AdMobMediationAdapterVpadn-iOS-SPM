@@ -22,7 +22,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/vpon-sdk/VpadnSDK-iOS-SPM",
-            from: "5.7.6"
+            "5.7.6"..<"5.8.2"
         ),
         .package(
             url: "https://github.com/googleads/swift-package-manager-google-mobile-ads",

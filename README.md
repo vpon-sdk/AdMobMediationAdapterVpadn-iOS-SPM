@@ -11,13 +11,24 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
 📄 AdMob Mediation Setup Guide: https://wiki.vpon.com/ios/mediation/admob/  
 📄 VpadnSDK Document: http://vpon-sdk.github.io/ios/
 
+> [!IMPORTANT]
+> **Compatibility notice for VpadnSDK 5.8.2**
+>
+> VpadnSDK 5.8.2 requires **iOS 16.0+**. Adapter **2.2.0** accepts any VpadnSDK 5.x, so once 5.8.2 is released, resolving packages with adapter 2.2.0 can pick VpadnSDK 5.8.2 and fail to build with a minimum-platform error.
+>
+> Adapter **2.2.1** limits VpadnSDK to versions below 5.8.2 (it resolves to VpadnSDK 5.8.0) and is otherwise identical to 2.2.0.
+>
+> - **Apps that support iOS 12–15**: use adapter **2.2.1** with the *Up to Next Major Version* rule starting at `2.2.1`.
+> - **Apps with a minimum deployment target of iOS 16.0+** that want VpadnSDK 5.8.2 or Google Mobile Ads 13.x: use adapter **3.0.0** or later when it is available.
+> - **Pinned to *Exact Version* `2.2.0`?** Change the rule to *Up to Next Major Version* `2.2.1`, or add `https://github.com/vpon-sdk/VpadnSDK-iOS-SPM` to your app with *Exact Version* `5.8.0`.
+
 ---
 
 ## Requirements
 
 - iOS 12.0+
-- VpadnSDK 5.7.6+
-- Google Mobile Ads SDK 12.0+
+- VpadnSDK 5.8.0 (2.2.x does not support VpadnSDK 5.8.2 or later)
+- Google Mobile Ads SDK 12.x
 
 ---
 
@@ -30,7 +41,7 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
    ```
    https://github.com/vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM
    ```
-3. Select version rule **Up to Next Major Version** and enter `2.2.0`
+3. Select version rule **Up to Next Major Version** and enter `2.2.1`
 4. Click **Add Package**
 
 The adapter automatically pulls in:
@@ -95,9 +106,10 @@ request.register(extras)
 
 ## Version Compatibility
 
-| Adapter | Vpon SDK | Google Mobile Ads |
-|---------|----------|-------------------|
-| 2.2.0   | ≥ 5.7.6  | ≥ 12.0            |
+| Adapter | Minimum iOS | VpadnSDK          | Google Mobile Ads | Notes |
+|---------|-------------|-------------------|-------------------|-------|
+| 2.2.1   | 12.0        | 5.8.0             | 12.x              | Recommended for apps that support iOS 12–15 |
+| 2.2.0   | 12.0        | ≥ 5.7.6 (5.x)     | 12.x              | Fails to build once VpadnSDK 5.8.2 is resolved — use 2.2.1 |
 
 ---
 
