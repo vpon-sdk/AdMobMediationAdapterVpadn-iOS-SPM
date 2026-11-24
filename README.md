@@ -1,90 +1,92 @@
 # AdMobMediationAdapterVpadn
 
-## Introduction
+[English](README.en.md) | 繁體中文
 
-Vpon AdMob mediation adapter for iOS.
+## 簡介
 
-The AdMobMediationAdapterVpadn bridges Google Mobile Ads SDK and VpadnSDK, so that the AdMob waterfall and bidding can route banner, interstitial, and native ad requests to Vpon.
+Vpon 的 iOS AdMob 中介（mediation）adapter。
 
-AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://swift.org/package-manager/).
+AdMobMediationAdapterVpadn 串接 Google Mobile Ads SDK 與 VpadnSDK，讓 AdMob 的 waterfall 與 bidding 可以把 Banner、插頁、原生廣告的請求導向 Vpon。
 
-📄 AdMob Mediation Setup Guide: https://wiki.vpon.com/ios/mediation/admob/  
-📄 VpadnSDK Document: http://vpon-sdk.github.io/ios/
+AdMobMediationAdapterVpadn 以 [Swift Package Manager](https://swift.org/package-manager/) 提供。
+
+📄 AdMob 中介設定指南：https://wiki.vpon.com/ios/mediation/admob/  
+📄 VpadnSDK 文件：http://vpon-sdk.github.io/ios/
 
 > [!IMPORTANT]
-> **Choosing a version**
+> **選擇版本**
 >
-> - **Apps with a minimum deployment target of iOS 16.0+**: use adapter **3.0.0** with the *Up to Next Major Version* rule starting at `3.0.0`. It supports Google Mobile Ads 12.x – 13.x and VpadnSDK 5.8.x (5.8.2 or later). If you are on 2.2.x, change the rule to start at `3.0.0`; *Up to Next Major* does not move from 2.x to 3.x by itself.
-> - **Apps that support iOS 12–15**: use adapter **2.2.1** with the *Up to Next Major Version* rule starting at `2.2.1`. It is limited to VpadnSDK 5.8.0 and Google Mobile Ads 12.x.
-> - **Do not use adapter 2.2.0.** It accepts any VpadnSDK 5.x, including versions that require iOS 16.0+, so resolving packages can fail with a minimum-platform error. Use `2.2.1` or `3.0.0`, or add `https://github.com/vpon-sdk/VpadnSDK-iOS-SPM` to your app with *Exact Version* `5.8.0`.
+> - **App 最低支援 iOS 16.0 以上**：使用 adapter **3.0.0**，版本規則選 *Up to Next Major Version*、從 `3.0.0` 開始。支援 Google Mobile Ads 12.x – 13.x 與 VpadnSDK 5.8.x（5.8.2 以上）。目前使用 2.2.x 的話，請把規則改成從 `3.0.0` 開始；*Up to Next Major* 不會自動從 2.x 升到 3.x。
+> - **App 仍需支援 iOS 12–15**：使用 adapter **2.2.1**，版本規則選 *Up to Next Major Version*、從 `2.2.1` 開始。VpadnSDK 限定 5.8.0，Google Mobile Ads 為 12.x。
+> - **請不要使用 adapter 2.2.0。** 它接受任何 VpadnSDK 5.x，包括需要 iOS 16.0 以上的版本，解析套件時可能因最低平台版本不符而無法建置。請改用 `2.2.1` 或 `3.0.0`，或在 App 加入 `https://github.com/vpon-sdk/VpadnSDK-iOS-SPM` 並指定 *Exact Version* `5.8.0`。
 
 ---
 
-## Requirements
+## 需求
 
-- iOS 16.0+
-- VpadnSDK 5.8.x (5.8.2 or later). VpadnSDK 5.8.x updates are picked up by updating packages.
+- iOS 16.0 以上
+- VpadnSDK 5.8.x（5.8.2 以上）。VpadnSDK 5.8.x 的更新，更新套件即可取得。
 - Google Mobile Ads SDK 12.x – 13.x
 
 ---
 
-## Installation
+## 安裝
 
 ### Swift Package Manager
 
-1. In Xcode, go to **File > Add Package Dependencies**
-2. Enter the repository URL:
+1. 在 Xcode 選擇 **File > Add Package Dependencies**
+2. 輸入套件網址：
    ```
    https://github.com/vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM
    ```
-3. Select version rule **Up to Next Major Version** and enter `3.0.0`
-4. Click **Add Package**
+3. 版本規則選 **Up to Next Major Version**，輸入 `3.0.0`
+4. 按 **Add Package**
 
-The adapter automatically pulls in:
+Adapter 會自動一起加入：
 
 - [VpadnSDKAdKit](https://github.com/vpon-sdk/VpadnSDK-iOS-SPM)
 - [GoogleMobileAds](https://github.com/googleads/swift-package-manager-google-mobile-ads)
 
-#### ⚠️ Installation Notice
+#### ⚠️ 安裝注意事項
 
-When using Swift Package Manager, Xcode does not automatically inherit binary linker flags.  
-You must manually add `-ObjC` to your Target's **Other Linker Flags** to prevent runtime crashes (`Selector not recognized`).
+使用 Swift Package Manager 時，Xcode 不會自動套用 binary 需要的 linker flag。  
+請在 Target 的 **Other Linker Flags** 手動加入 `-ObjC`，否則執行時會閃退（`Selector not recognized`）。
 
-**How to add `-ObjC`:**
+**加入 `-ObjC` 的方式：**
 
-1. In Xcode, select your **App Target**
-2. Go to **Build Settings** → search for **Other Linker Flags**
-3. Add `-ObjC`
+1. 在 Xcode 選擇您的 **App Target**
+2. 到 **Build Settings**，搜尋 **Other Linker Flags**
+3. 加入 `-ObjC`
 
-> If your project also pulls VpadnSDK or GoogleMobileAds via CocoaPods elsewhere, switch those to Swift Package Manager too — mixing can cause duplicate-symbol linker errors.
-
----
-
-## Migration from CocoaPods
-
-Starting with 2.2.0, AdMobMediationAdapterVpadn is distributed exclusively via Swift Package Manager. CocoaPods is no longer supported for new versions.
-
-If your project currently uses `pod 'AdMobMediationAdapterVpadn'`, remove the pod entry, run `pod install` to clean up, and follow the [Installation](#installation) instructions above to add the package via SPM.
+> 如果專案的其他地方也用 CocoaPods 安裝了 VpadnSDK 或 GoogleMobileAds，請一併改用 Swift Package Manager——混用可能造成連結時的重複符號錯誤。
 
 ---
 
-## AdMob Mediation Setup
+## 從 CocoaPods 移轉
 
-Configure Vpon as a mediation source in your AdMob dashboard. For step-by-step instructions (network credentials, custom event class names, parameter mapping), refer to:
+CocoaPods 上的最後一版是 adapter 2.2.0；2.2.1 之後只以 Swift Package Manager 提供。
+
+如果專案目前使用 `pod 'AdMobMediationAdapterVpadn'`，請刪除這個 pod、執行 `pod install` 清除，再依上方[安裝](#安裝)的步驟以 SPM 加入套件。
+
+---
+
+## AdMob 中介設定
+
+請在 AdMob 後台把 Vpon 設定為中介來源。詳細步驟（聯播網憑證、custom event class 名稱、參數對應）請參考：
 
 📄 https://wiki.vpon.com/ios/mediation/admob/
 
 ---
 
-## Usage
+## 使用方式
 
-After completing AdMob mediation setup, request ads through the standard Google Mobile Ads API — the adapter routes to Vpon transparently when AdMob waterfall / bidding selects it.
+完成 AdMob 中介設定後，照一般 Google Mobile Ads API 請求廣告即可；當 AdMob 的 waterfall／bidding 選中 Vpon 時，adapter 會自動處理。
 
 ```swift
 import GoogleMobileAds
 ```
 
-To pass Vpon-specific request parameters (content URL, content data, friendly obstructions), attach an `Extras` instance to your request:
+要傳入 Vpon 專用的請求參數（content URL、content data、friendly obstructions），請在請求加上 `Extras`：
 
 ```swift
 import GoogleMobileAds
@@ -100,21 +102,21 @@ request.register(extras)
 
 ---
 
-## Version Compatibility
+## 版本相容性
 
-| Adapter | Minimum iOS | VpadnSDK          | Google Mobile Ads | Notes |
-|---------|-------------|-------------------|-------------------|-------|
-| 3.0.0   | 16.0        | 5.8.x (≥ 5.8.2)   | 12.x – 13.x       |       |
-| 2.2.1   | 12.0        | 5.8.0             | 12.x              | For apps that support iOS 12–15 |
-| 2.2.0   | 12.0        | ≥ 5.7.6 (5.x)     | 12.x              | May resolve to a VpadnSDK version that requires iOS 16.0 — use 2.2.1 or 3.0.0 |
+| Adapter | 最低 iOS | VpadnSDK          | Google Mobile Ads | 備註 |
+|---------|----------|-------------------|-------------------|------|
+| 3.0.0   | 16.0     | 5.8.x（≥ 5.8.2）  | 12.x – 13.x       |      |
+| 2.2.1   | 12.0     | 5.8.0             | 12.x              | 給需要支援 iOS 12–15 的 App |
+| 2.2.0   | 12.0     | ≥ 5.7.6（5.x）    | 12.x              | 可能解析到需要 iOS 16.0 的 VpadnSDK 版本——請改用 2.2.1 或 3.0.0 |
 
-`3.0.0` has been built against VpadnSDK 5.8.2 with Google Mobile Ads SDK 12.0.0 and 13.13.0, and tested through AdMob mediation with VpadnSDK 5.8.2 and Google Mobile Ads SDK 13.13.0 (Xcode 27.2).
+`3.0.0` 已以 VpadnSDK 5.8.2 搭配 Google Mobile Ads SDK 12.0.0 與 13.13.0 建置，並以 VpadnSDK 5.8.2 與 Google Mobile Ads SDK 13.13.0 透過 AdMob 中介測試（Xcode 27.2）。
 
 ---
 
-## Modifications
+## 修改與授權
 
-Source files in this repository are visible for inspection and debugging purposes. Per the LICENSE, modification or redistribution requires written authorization from Vpon. For bug reports, feature requests, or licensing inquiries, please contact <mi@vpon.com>.
+本 repository 的原始碼僅供檢視與除錯。依 LICENSE，修改或再散佈須取得 Vpon 書面授權。問題回報、功能建議或授權相關詢問，請聯絡 <fae@vpon.com>。
 
 ---
 
