@@ -11,8 +11,8 @@ struct VponAdapterInfo {
     
     // MARK: - Constants
     
-    static let adapterVersion = "2.2.1"
-    static let limitVponSDKVersion = "5.7.6"
+    static let adapterVersion = "3.0.0"
+    static let limitVponSDKVersion = "5.8.0"
     
     /// "parameter"
     static let nativeAdAdUnitIDKey = "parameter"
@@ -48,10 +48,10 @@ struct VponAdapterInfo {
     // MARK: - Helpers
     
     static func adapterNote() {
-        log("Admob Version: \(MobileAds.shared.versionNumber)")
+        log("Admob Version: \(string(for: MobileAds.shared.versionNumber))")
         log("Adapter Version: \(adapterVersion)")
     }
-    
+
     static func verifyVersion() -> Bool {
         let result = inspectVersion(VponAdConfiguration.sdkVersion(), isLargerEqualThanVersion: limitVponSDKVersion)
         if !result {
@@ -59,30 +59,36 @@ struct VponAdapterInfo {
         }
         return result
     }
-    
+
     static func inspectVersion(_ actualVersion: String, isLargerEqualThanVersion requiredVersion: String) -> Bool {
-        let requiredVersion = requiredVersion.replacingOccurrences(of: "vpadn-sdk-i-v", with: "")
-        let actualVersion = actualVersion.replacingOccurrences(of: "vpadn-sdk-i-v", with: "")
-        
-        let requiredComponents = requiredVersion.components(separatedBy: ".")
-        let actualComponents = actualVersion.components(separatedBy: ".")
-        
-        for index in 0 ..< requiredComponents.count {
-            guard actualComponents.count > index else {
-                break
-            }
-            let requiredSplitVersion = requiredComponents[index]
-            let actualSplitVersion = actualComponents[index]
-            let result = requiredSplitVersion.compare(actualSplitVersion, options: .numeric)
-            if result == .orderedAscending {
-                break
-            } else if result == .orderedSame {
-                continue
-            } else {
-                return false
-            }
+        return !versionComponents(actualVersion).lexicographicallyPrecedes(versionComponents(requiredVersion))
+    }
+
+    /// Parses a version string into exactly [major, minor, patch].
+    ///
+    /// Accepts the raw VpadnSDK format ("vpadn-sdk-i-v5.8.0"), a "v" prefix,
+    /// and pre-release / build suffixes ("2.3.0-beta1", "5.8.0+abc"): anything
+    /// before the first digit and after the first "-" / "+" is dropped.
+    /// Missing or non-numeric components become 0. A pre-release therefore
+    /// compares equal to its release (5.8.0-alpha1 == 5.8.0).
+    static func versionComponents(_ version: String) -> [Int] {
+        guard let start = version.firstIndex(where: { ("0"..."9").contains($0) }) else {
+            return [0, 0, 0]
         }
-        return true
+        var core = version[start...]
+        if let suffix = core.firstIndex(where: { $0 == "-" || $0 == "+" }) {
+            core = core[..<suffix]
+        }
+        var components = core.split(separator: ".").prefix(3).map { Int($0) ?? 0 }
+        while components.count < 3 {
+            components.append(0)
+        }
+        return components
+    }
+
+    static func versionNumber(from version: String) -> VersionNumber {
+        let components = versionComponents(version)
+        return VersionNumber(majorVersion: components[0], minorVersion: components[1], patchVersion: components[2])
     }
     
     static func defaultError() -> NSError {
@@ -95,24 +101,12 @@ struct VponAdapterInfo {
     }
     
     static func adapterVersionNumber() -> VersionNumber {
-        let components = adapterVersion.split(separator: ".").map { Int($0) ?? 0 }
-        let major = components.count > 0 ? components[0] : 0
-        let minor = components.count > 1 ? components[1] : 0
-        let patch = components.count > 2 ? components[2] : 0
-
-        return VersionNumber(majorVersion: major, minorVersion: minor, patchVersion: patch)
+        return versionNumber(from: adapterVersion)
     }
 
-    
     static func adSdkVersionNumber() -> VersionNumber {
-        let versionString = VponAdConfiguration.sdkVersion()
-        let cleaned = versionString.trimmingCharacters(in: CharacterSet(charactersIn: "vV"))
-        let components = cleaned.split(separator: ".").map { Int($0) ?? 0 }
-        let major = components.count > 0 ? components[0] : 0
-        let minor = components.count > 1 ? components[1] : 0
-        let patch = components.count > 2 ? components[2] : 0
-        
-        return VersionNumber(majorVersion: major, minorVersion: minor, patchVersion: patch)
+        // sdkVersion() returns "vpadn-sdk-i-v5.8.0"; versionComponents strips the prefix.
+        return versionNumber(from: VponAdConfiguration.sdkVersion())
     }
     
     static func createRequest(from adConfiguration: MediationAdConfiguration) -> VponAdRequest {
@@ -121,10 +115,9 @@ struct VponAdapterInfo {
         // 1. Seed contentData with adapter-reserved metadata. Integrator-supplied
         //    content data (from Extras) is merged on top, so integrator keys
         //    always win on collision.
-        let admobVersion = MobileAds.shared.versionNumber
         var contentData: [String: Any] = [
             contentDataAdapterVersionKey: adapterVersion,
-            contentDataAdMobSDKVersionKey: "\(admobVersion.majorVersion).\(admobVersion.minorVersion).\(admobVersion.patchVersion)",
+            contentDataAdMobSDKVersionKey: string(for: MobileAds.shared.versionNumber),
         ]
 
         // 2. Process Extras (provided by adConfiguration.extras)

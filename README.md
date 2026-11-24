@@ -12,23 +12,19 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
 📄 VpadnSDK Document: http://vpon-sdk.github.io/ios/
 
 > [!IMPORTANT]
-> **Compatibility notice for VpadnSDK 5.8.2**
+> **Choosing a version**
 >
-> VpadnSDK 5.8.2 requires **iOS 16.0+**. Adapter **2.2.0** accepts any VpadnSDK 5.x, so once 5.8.2 is released, resolving packages with adapter 2.2.0 can pick VpadnSDK 5.8.2 and fail to build with a minimum-platform error.
->
-> Adapter **2.2.1** limits VpadnSDK to versions below 5.8.2 (it resolves to VpadnSDK 5.8.0) and is otherwise identical to 2.2.0.
->
-> - **Apps that support iOS 12–15**: use adapter **2.2.1** with the *Up to Next Major Version* rule starting at `2.2.1`.
-> - **Apps with a minimum deployment target of iOS 16.0+** that want VpadnSDK 5.8.2 or Google Mobile Ads 13.x: use adapter **3.0.0** or later when it is available.
-> - **Pinned to *Exact Version* `2.2.0`?** Change the rule to *Up to Next Major Version* `2.2.1`, or add `https://github.com/vpon-sdk/VpadnSDK-iOS-SPM` to your app with *Exact Version* `5.8.0`.
+> - **Apps with a minimum deployment target of iOS 16.0+**: use adapter **3.0.0** with the *Up to Next Major Version* rule starting at `3.0.0`. It supports Google Mobile Ads 12.x – 13.x and VpadnSDK 5.8.x (5.8.2 or later). If you are on 2.2.x, change the rule to start at `3.0.0`; *Up to Next Major* does not move from 2.x to 3.x by itself.
+> - **Apps that support iOS 12–15**: use adapter **2.2.1** with the *Up to Next Major Version* rule starting at `2.2.1`. It is limited to VpadnSDK 5.8.0 and Google Mobile Ads 12.x.
+> - **Do not use adapter 2.2.0.** It accepts any VpadnSDK 5.x, including versions that require iOS 16.0+, so resolving packages can fail with a minimum-platform error. Use `2.2.1` or `3.0.0`, or add `https://github.com/vpon-sdk/VpadnSDK-iOS-SPM` to your app with *Exact Version* `5.8.0`.
 
 ---
 
 ## Requirements
 
-- iOS 12.0+
-- VpadnSDK 5.8.0 (2.2.x does not support VpadnSDK 5.8.2 or later)
-- Google Mobile Ads SDK 12.x
+- iOS 16.0+
+- VpadnSDK 5.8.x (5.8.2 or later). VpadnSDK 5.8.x updates are picked up by updating packages.
+- Google Mobile Ads SDK 12.x – 13.x
 
 ---
 
@@ -41,7 +37,7 @@ AdMobMediationAdapterVpadn is distributed via [Swift Package Manager](https://sw
    ```
    https://github.com/vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM
    ```
-3. Select version rule **Up to Next Major Version** and enter `2.2.1`
+3. Select version rule **Up to Next Major Version** and enter `3.0.0`
 4. Click **Add Package**
 
 The adapter automatically pulls in:
@@ -108,8 +104,11 @@ request.register(extras)
 
 | Adapter | Minimum iOS | VpadnSDK          | Google Mobile Ads | Notes |
 |---------|-------------|-------------------|-------------------|-------|
-| 2.2.1   | 12.0        | 5.8.0             | 12.x              | Recommended for apps that support iOS 12–15 |
-| 2.2.0   | 12.0        | ≥ 5.7.6 (5.x)     | 12.x              | Fails to build once VpadnSDK 5.8.2 is resolved — use 2.2.1 |
+| 3.0.0   | 16.0        | 5.8.x (≥ 5.8.2)   | 12.x – 13.x       |       |
+| 2.2.1   | 12.0        | 5.8.0             | 12.x              | For apps that support iOS 12–15 |
+| 2.2.0   | 12.0        | ≥ 5.7.6 (5.x)     | 12.x              | May resolve to a VpadnSDK version that requires iOS 16.0 — use 2.2.1 or 3.0.0 |
+
+`3.0.0` has been built against VpadnSDK 5.8.2 with Google Mobile Ads SDK 12.0.0 and 13.13.0, and tested through AdMob mediation with VpadnSDK 5.8.2 and Google Mobile Ads SDK 13.13.0 (Xcode 27.2).
 
 ---
 

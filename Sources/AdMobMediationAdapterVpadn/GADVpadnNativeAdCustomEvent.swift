@@ -125,7 +125,7 @@ public class GADVpadnNativeAdCustomEvent: NSObject, MediationAdapter,
 
     // ✅ 修復 2：新增 didRecordClickOnAsset
     public func didRecordClickOnAsset(
-        withName assetName: GADNativeAssetIdentifier,
+        with assetName: GADNativeAssetIdentifier,
         view: UIView,
         viewController: UIViewController
     ) {

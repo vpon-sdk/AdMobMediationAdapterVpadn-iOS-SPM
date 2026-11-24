@@ -3,7 +3,7 @@
 // Package.swift for AdMobMediationAdapterVpadn (Swift Package Manager)
 //
 // This manifest is mirrored from the development repo to the public SPM repo
-// (vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM) by `release-spm.sh`.
+// (vpon-sdk/AdMobMediationAdapterVpadn-iOS-SPM) by `ci/publish-spm.sh`.
 //
 
 import PackageDescription
@@ -11,7 +11,8 @@ import PackageDescription
 let package = Package(
     name: "AdMobMediationAdapterVpadn",
     platforms: [
-        .iOS(.v12)
+        // String form: `.v16` needs swift-tools-version 5.7+, this manifest is 5.3.
+        .iOS("16.0")
     ],
     products: [
         .library(
@@ -22,11 +23,13 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/vpon-sdk/VpadnSDK-iOS-SPM",
-            "5.7.6"..<"5.8.2"
+            // 5.8.x only: a later minor (e.g. 5.9) may need a new adapter release.
+            // ci/lib.sh reads the lower bound from the next line; keep this form.
+            .upToNextMinor(from: "5.8.2")
         ),
         .package(
             url: "https://github.com/googleads/swift-package-manager-google-mobile-ads",
-            from: "12.0.0"
+            "12.0.0"..<"14.0.0"
         ),
     ],
     targets: [
